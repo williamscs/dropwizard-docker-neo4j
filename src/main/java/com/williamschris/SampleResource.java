@@ -10,13 +10,21 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.UUID;
 
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class SampleResource {
-    protected Session session = Neo4jSessionFactory.getInstance().getNeo4jSession();
+    private Session session = Neo4jSessionFactory.getInstance().getNeo4jSession();
 
     public SampleResource() {
+        session.deleteAll(MyThing.class);
+        MyThing thing1 = new MyThing();
+        thing1.id = UUID.randomUUID().toString();
+        session.save(thing1);
+        MyThing thing2 = new MyThing(Collections.singleton(thing1));
+        session.save(thing2);
     }
 
     @GET
@@ -27,7 +35,7 @@ public class SampleResource {
     @Path("/values")
     @GET
     public Collection<MyThing> getAllStuff() {
-        return session.loadAll(MyThing.class);
+        return session.loadAll(MyThing.class, 0);
     }
 
     @Path("/values/{id}")

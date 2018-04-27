@@ -7,19 +7,29 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.UUID;
 
 @NodeEntity
 public class MyThing implements Serializable {
     @Id @GeneratedValue
     private Long neoId;
 
-    String id;
+    public String id;
 
-    @Relationship(type = "CONNECTED")
-    Set<MyThing> associatedThings;
+    @Relationship(type = "CONNECTED", direction = Relationship.UNDIRECTED)
+    private Set<MyThing> associatedThings;
 
     public MyThing() {
 
+    }
+
+    public MyThing(Set<MyThing> associatedThings) {
+        this.id = UUID.randomUUID().toString();
+        this.associatedThings = associatedThings;
+    }
+
+    public Long getNeoId() {
+        return this.neoId;
     }
 
     public String getId() {
